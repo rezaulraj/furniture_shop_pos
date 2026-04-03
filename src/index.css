@@ -1,0 +1,120 @@
+@import "tailwindcss";
+
+/* Custom scrollbar styles for Tailwind CSS 4 */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer utilities {
+  /* Scrollbar width */
+  .scrollbar-w-2::-webkit-scrollbar {
+    width: 0.5rem;
+    height: 0.5rem;
+  }
+
+  /* Scrollbar track */
+  .scrollbar-track-gray-100::-webkit-scrollbar-track {
+    background-color: #f3f4f6;
+    border-radius: 9999px;
+  }
+
+  .scrollbar-track-gray-800::-webkit-scrollbar-track {
+    background-color: #1f2937;
+    border-radius: 9999px;
+  }
+
+  /* Scrollbar thumb */
+  .scrollbar-thumb-gray-300::-webkit-scrollbar-thumb {
+    background-color: #d1d5db;
+    border-radius: 9999px;
+  }
+
+  .scrollbar-thumb-gray-600::-webkit-scrollbar-thumb {
+    background-color: #4b5563;
+    border-radius: 9999px;
+  }
+
+  .scrollbar-thumb-gray-500::-webkit-scrollbar-thumb {
+    background-color: #6b7280;
+    border-radius: 9999px;
+  }
+
+  /* Hover effects */
+  .scrollbar-thumb-gray-300:hover::-webkit-scrollbar-thumb {
+    background-color: #9ca3af;
+  }
+
+  .scrollbar-thumb-gray-600:hover::-webkit-scrollbar-thumb {
+    background-color: #6b7280;
+  }
+}
+
+/* Dark mode support */
+.dark {
+  color-scheme: dark;
+}
+
+/* Smooth transitions for dark mode */
+* {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3a2010;
+  border-radius: 99px;
+}

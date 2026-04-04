@@ -10,6 +10,10 @@ import NewPurchase from "./pages/puchase-module/NewPurchase";
 import PurchaseHistory from "./pages/puchase-module/PurchaseHistory";
 import PurchaseReturn from "./pages/puchase-module/PurchaseReturn";
 import NotFoundPage from "./components/NotFoundPage";
+import StockOverview from "./pages/inventory/Stockoverview";
+import StockAlert from "./pages/inventory/Stockalert";
+import DamageStock from "./pages/inventory/Damagestock";
+import StockTransfer from "./pages/inventory/Stocktransfer";
 function App() {
   return (
     <>
@@ -23,6 +27,10 @@ function App() {
           <Route path="/purchases/new" element={<NewPurchase />} />
           <Route path="/purchases/history" element={<PurchaseHistory />} />
           <Route path="/purchases/returns" element={<PurchaseReturn />} />
+          <Route path="/inventory/overview" element={<StockOverview />} />
+          <Route path="/inventory/low-stock" element={<StockAlert />} />
+          <Route path="/inventory/transfer" element={<StockTransfer />} />
+          <Route path="/inventory/damage" element={<DamageStock />} />
           <Route path="/purchases/new" element={<div>New Purchase</div>} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>

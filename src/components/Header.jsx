@@ -309,7 +309,7 @@ const Header = ({ onToggleSidebar, currentPage, darkMode, setDarkMode }) => {
 
         {/* Quick Sale */}
         <button
-          onClick={() => {}}
+          onClick={() => {navigate("/sale");}}
           style={{
             display: "flex",
             alignItems: "center",

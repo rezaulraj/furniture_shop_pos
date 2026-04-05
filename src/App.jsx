@@ -14,6 +14,9 @@ import StockOverview from "./pages/inventory/Stockoverview";
 import StockAlert from "./pages/inventory/Stockalert";
 import DamageStock from "./pages/inventory/Damagestock";
 import StockTransfer from "./pages/inventory/Stocktransfer";
+import Products from "./pages/product/Products";
+import AddProduct from "./pages/product/Addproduct";
+import Categories from "./pages/product/Categories";
 function App() {
   return (
     <>
@@ -31,6 +34,9 @@ function App() {
           <Route path="/inventory/low-stock" element={<StockAlert />} />
           <Route path="/inventory/transfer" element={<StockTransfer />} />
           <Route path="/inventory/damage" element={<DamageStock />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/products/add" element={<AddProduct />} />
+          <Route path="/products/categories" element={<Categories />} />
           <Route path="/purchases/new" element={<div>New Purchase</div>} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>

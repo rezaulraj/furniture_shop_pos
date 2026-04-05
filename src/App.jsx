@@ -17,6 +17,10 @@ import StockTransfer from "./pages/inventory/Stocktransfer";
 import Products from "./pages/product/Products";
 import AddProduct from "./pages/product/Addproduct";
 import Categories from "./pages/product/Categories";
+import AllCustomers from "./pages/customer/Allcustomers";
+import AddCustomer from "./pages/customer/Addcustomer";
+import AllSuppliers from "./pages/supplier/Allsuppliers";
+import AddSupplier from "./pages/supplier/Addsupplier";
 function App() {
   return (
     <>
@@ -37,6 +41,10 @@ function App() {
           <Route path="/products" element={<Products />} />
           <Route path="/products/add" element={<AddProduct />} />
           <Route path="/products/categories" element={<Categories />} />
+          <Route path="/customers" element={<AllCustomers />} />
+          <Route path="/customers/add" element={<AddCustomer />} />
+          <Route path="/suppliers" element={<AllSuppliers />} />
+          <Route path="/suppliers/add" element={<AddSupplier />} />
           <Route path="/purchases/new" element={<div>New Purchase</div>} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>

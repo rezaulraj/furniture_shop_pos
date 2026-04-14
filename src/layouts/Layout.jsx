@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import SideBar from "../components/Sidebar";
+import SideBar from "../components/SideBar";
 import Header from "../components/Header";
 
 const PATH_TITLES = {

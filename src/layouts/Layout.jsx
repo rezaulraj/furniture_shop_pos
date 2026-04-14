@@ -45,6 +45,11 @@ const Layout = () => {
   const [currentPage, setCurrentPage] = useState("Dashboard");
   const location = useLocation();
 
+  // Apply/remove .dark class on <html>
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", darkMode);
+  }, [darkMode]);
+
   useEffect(() => {
     const check = () => {
       const mobile = window.innerWidth < 768;
@@ -63,17 +68,14 @@ const Layout = () => {
 
   const toggleSidebar = () => setIsSidebarOpen((p) => !p);
 
-  const mainBg = darkMode
-    ? "linear-gradient(160deg,#0f0803 0%,#1a0f05 100%)"
-    : "linear-gradient(160deg,#fdf6ed 0%,#f5e6ce 100%)";
-
   return (
     <div
       style={{
         display: "flex",
         height: "100vh",
         overflow: "hidden",
-        background: mainBg,
+        background: "var(--bg-base)",
+        fontFamily: "'Open Sans', sans-serif",
       }}
     >
       {/* Sidebar */}
@@ -82,7 +84,7 @@ const Layout = () => {
           position: isMobile ? "fixed" : "relative",
           zIndex: isMobile ? 30 : "auto",
           height: "100%",
-          width: isSidebarOpen ? (isMobile ? 260 : 260) : isMobile ? 0 : 72,
+          width: isSidebarOpen ? 260 : isMobile ? 0 : 72,
           transition: "width 0.3s cubic-bezier(0.4,0,0.2,1)",
           overflow: "hidden",
           flexShrink: 0,
@@ -94,24 +96,25 @@ const Layout = () => {
           isOpen={isSidebarOpen}
           isMobile={isMobile}
           onToggle={toggleSidebar}
+          darkMode={darkMode}
         />
       </div>
 
-      {/* Overlay */}
+      {/* Mobile Overlay */}
       {isMobile && isSidebarOpen && (
         <div
           onClick={() => setIsSidebarOpen(false)}
           style={{
             position: "fixed",
             inset: 0,
-            background: "rgba(0,0,0,0.6)",
+            background: "rgba(4,13,28,0.75)",
             zIndex: 20,
-            backdropFilter: "blur(2px)",
+            backdropFilter: "blur(3px)",
           }}
         />
       )}
 
-      {/* Main */}
+      {/* Main Content */}
       <div
         style={{
           flex: 1,
@@ -132,10 +135,9 @@ const Layout = () => {
             flex: 1,
             overflow: "auto",
             padding: "24px",
+            background: "var(--bg-base)",
             scrollbarWidth: "thin",
-            scrollbarColor: darkMode
-              ? "#4a2e0a transparent"
-              : "#cd853f40 transparent",
+            scrollbarColor: "var(--scrollbar) transparent",
           }}
         >
           <Outlet />

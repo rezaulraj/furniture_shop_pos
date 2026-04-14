@@ -39,7 +39,15 @@ export default function SaleHistoryPage() {
     .reduce((acc, s) => acc + s.total, 0);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 14,
+        fontFamily: "'Open Sans', sans-serif",
+      }}
+    >
+      {/* ── Stat cards ── */}
       <div
         style={{
           display: "grid",
@@ -51,42 +59,82 @@ export default function SaleHistoryPage() {
           {
             label: "Total Sales",
             value: `৳${SALE_HISTORY.reduce((a, s) => a + s.total, 0).toLocaleString()}`,
-            color: T.green,
+            color: "var(--green)",
+            icon: "📈",
           },
           {
             label: "Total Paid",
             value: `৳${SALE_HISTORY.reduce((a, s) => a + s.paid, 0).toLocaleString()}`,
-            color: T.blue,
+            color: "#60a5fa",
+            icon: "✅",
           },
           {
             label: "Total Due",
             value: `৳${SALE_HISTORY.reduce((a, s) => a + s.due, 0).toLocaleString()}`,
-            color: T.red,
+            color: "#f87171",
+            icon: "⚠️",
           },
           {
             label: "Invoices",
             value: `${SALE_HISTORY.length}`,
-            color: T.amber,
+            color: "var(--accent)",
+            icon: "🧾",
           },
         ].map((k, i) => (
-          <div key={i} style={{ ...card(), padding: "14px 16px" }}>
-            <p style={{ color: T.textSub, fontSize: 10, margin: 0 }}>
-              {k.label}
-            </p>
-            <p
+          <div
+            key={i}
+            style={{
+              ...card(),
+              padding: "16px 18px",
+              display: "flex",
+              alignItems: "center",
+              gap: 14,
+            }}
+          >
+            <div
               style={{
-                color: k.color,
+                width: 42,
+                height: 42,
+                borderRadius: 10,
+                background: `${k.color}18`,
+                border: `1px solid ${k.color}30`,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
                 fontSize: 20,
-                fontWeight: 800,
-                margin: "4px 0 0",
+                flexShrink: 0,
               }}
             >
-              {k.value}
-            </p>
+              {k.icon}
+            </div>
+            <div>
+              <p
+                style={{
+                  color: "var(--text-muted)",
+                  fontSize: 10,
+                  margin: 0,
+                  fontWeight: 600,
+                  letterSpacing: "0.07em",
+                }}
+              >
+                {k.label.toUpperCase()}
+              </p>
+              <p
+                style={{
+                  color: k.color,
+                  fontSize: 20,
+                  fontWeight: 800,
+                  margin: "2px 0 0",
+                }}
+              >
+                {k.value}
+              </p>
+            </div>
           </div>
         ))}
       </div>
 
+      {/* ── Filters ── */}
       <div
         style={{
           ...card(),
@@ -132,22 +180,24 @@ export default function SaleHistoryPage() {
         </Btn>
       </div>
 
+      {/* ── Bulk action bar ── */}
       {selected.size > 0 && (
         <div
           style={{
             ...card(),
             padding: "10px 16px",
-            background: "rgba(205,133,63,0.08)",
-            borderColor: "rgba(205,133,63,0.3)",
+            background: "rgba(172,82,8,0.06)",
+            borderColor: "rgba(172,82,8,0.25)",
             display: "flex",
             alignItems: "center",
             gap: 12,
+            animation: "slideUp 0.2s cubic-bezier(0.16,1,0.3,1) both",
           }}
         >
-          <Badge color="gold">{selected.size} selected</Badge>
-          <span style={{ color: T.textSub, fontSize: 12 }}>
+          <Badge color="accent">{selected.size} selected</Badge>
+          <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>
             Total:{" "}
-            <strong style={{ color: T.amber }}>
+            <strong style={{ color: "var(--green)" }}>
               ৳{totalSelected.toLocaleString()}
             </strong>
           </span>
@@ -161,9 +211,10 @@ export default function SaleHistoryPage() {
         </div>
       )}
 
+      {/* ── Table ── */}
       <div style={{ ...card(), overflow: "hidden" }}>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead style={{ background: T.bg2 }}>
+          <thead style={{ background: "var(--bg-secondary)" }}>
             <tr>
               <th style={{ padding: "11px 14px", width: 32 }}>
                 <input
@@ -172,7 +223,7 @@ export default function SaleHistoryPage() {
                     selected.size === filtered.length && filtered.length > 0
                   }
                   onChange={toggleAll}
-                  style={{ cursor: "pointer", accentColor: T.gold }}
+                  style={{ cursor: "pointer", accentColor: "var(--accent)" }}
                 />
               </th>
               {[
@@ -191,12 +242,12 @@ export default function SaleHistoryPage() {
                   key={h}
                   style={{
                     padding: "11px 10px",
-                    color: T.textMut,
+                    color: "var(--text-muted)",
                     fontSize: 9.5,
-                    fontWeight: 600,
+                    fontWeight: 700,
                     textAlign: "left",
                     letterSpacing: "0.07em",
-                    borderBottom: `1px solid ${T.border}`,
+                    borderBottom: "1px solid var(--border)",
                   }}
                 >
                   {h.toUpperCase()}
@@ -209,15 +260,15 @@ export default function SaleHistoryPage() {
               <tr
                 key={s.id}
                 style={{
-                  borderBottom: `1px solid ${T.border}`,
+                  borderBottom: "1px solid var(--border)",
                   background: selected.has(s.id)
-                    ? "rgba(205,133,63,0.06)"
+                    ? "rgba(172,82,8,0.06)"
                     : "transparent",
                   transition: "background .12s",
                 }}
                 onMouseEnter={(e) => {
                   if (!selected.has(s.id))
-                    e.currentTarget.style.background = "rgba(139,90,43,0.04)";
+                    e.currentTarget.style.background = "rgba(255,255,255,0.02)";
                 }}
                 onMouseLeave={(e) => {
                   if (!selected.has(s.id))
@@ -229,13 +280,13 @@ export default function SaleHistoryPage() {
                     type="checkbox"
                     checked={selected.has(s.id)}
                     onChange={() => toggle(s.id)}
-                    style={{ cursor: "pointer", accentColor: T.gold }}
+                    style={{ cursor: "pointer", accentColor: "var(--accent)" }}
                   />
                 </td>
                 <td style={{ padding: "10px 10px" }}>
                   <span
                     style={{
-                      color: T.gold,
+                      color: "var(--accent)",
                       fontWeight: 700,
                       fontSize: 12,
                       fontFamily: "monospace",
@@ -245,25 +296,33 @@ export default function SaleHistoryPage() {
                   </span>
                 </td>
                 <td style={{ padding: "10px 10px" }}>
-                  <span style={{ color: T.text, fontSize: 12 }}>
+                  <span style={{ color: "var(--text-primary)", fontSize: 12 }}>
                     {s.customer}
                   </span>
                 </td>
                 <td style={{ padding: "10px 10px" }}>
-                  <Badge color="gold" small>
+                  <Badge color="accent" small>
                     {s.items} items
                   </Badge>
                 </td>
                 <td style={{ padding: "10px 10px" }}>
                   <span
-                    style={{ color: T.text, fontWeight: 700, fontSize: 12 }}
+                    style={{
+                      color: "var(--text-primary)",
+                      fontWeight: 700,
+                      fontSize: 12,
+                    }}
                   >
                     ৳{s.total.toLocaleString()}
                   </span>
                 </td>
                 <td style={{ padding: "10px 10px" }}>
                   <span
-                    style={{ color: T.green, fontWeight: 600, fontSize: 12 }}
+                    style={{
+                      color: "var(--green)",
+                      fontWeight: 600,
+                      fontSize: 12,
+                    }}
                   >
                     ৳{s.paid.toLocaleString()}
                   </span>
@@ -271,7 +330,7 @@ export default function SaleHistoryPage() {
                 <td style={{ padding: "10px 10px" }}>
                   <span
                     style={{
-                      color: s.due > 0 ? T.red : T.textMut,
+                      color: s.due > 0 ? "#f87171" : "var(--text-muted)",
                       fontWeight: 600,
                       fontSize: 12,
                     }}
@@ -283,12 +342,16 @@ export default function SaleHistoryPage() {
                   <StatusBadge status={s.status} />
                 </td>
                 <td style={{ padding: "10px 10px" }}>
-                  <span style={{ color: T.textSub, fontSize: 11 }}>
+                  <span
+                    style={{ color: "var(--text-secondary)", fontSize: 11 }}
+                  >
                     {s.seller}
                   </span>
                 </td>
                 <td style={{ padding: "10px 10px" }}>
-                  <span style={{ color: T.textSub, fontSize: 11 }}>
+                  <span
+                    style={{ color: "var(--text-secondary)", fontSize: 11 }}
+                  >
                     {s.date}
                   </span>
                 </td>
@@ -302,12 +365,21 @@ export default function SaleHistoryPage() {
                         borderRadius: 6,
                         background: "rgba(96,165,250,0.1)",
                         border: "1px solid rgba(96,165,250,0.2)",
-                        color: T.blue,
+                        color: "#60a5fa",
                         cursor: "pointer",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
+                        transition: "all .15s",
                       }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.background =
+                          "rgba(96,165,250,0.2)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.background =
+                          "rgba(96,165,250,0.1)")
+                      }
                     >
                       <Ic.Eye />
                     </button>
@@ -317,14 +389,23 @@ export default function SaleHistoryPage() {
                         width: 26,
                         height: 26,
                         borderRadius: 6,
-                        background: "rgba(139,90,43,0.1)",
-                        border: `1px solid ${T.border}`,
-                        color: T.gold,
+                        background: "rgba(172,82,8,0.1)",
+                        border: "1px solid rgba(172,82,8,0.2)",
+                        color: "var(--accent)",
                         cursor: "pointer",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
+                        transition: "all .15s",
                       }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.background =
+                          "rgba(172,82,8,0.2)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.background =
+                          "rgba(172,82,8,0.1)")
+                      }
                     >
                       <Ic.Print />
                     </button>

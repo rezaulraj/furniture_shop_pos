@@ -8,6 +8,11 @@ import { PRODUCTS, CUSTOMERS } from "../../data/sampleData";
 import CustomerModal from "../../components/CustomerModal";
 import InvoiceModal from "../../components/InvoiceModal";
 
+/* ── tiny animation helper ── */
+const fadeUp = {
+  animation: "slideUp 0.22s cubic-bezier(0.16,1,0.3,1) both",
+};
+
 export default function NewSalePage() {
   const [productSearch, setProductSearch] = useState("");
   const [selectedItems, setSelectedItems] = useState([
@@ -140,6 +145,21 @@ export default function NewSalePage() {
           : "Mixed",
   };
 
+  /* ── shared inline styles ── */
+  const qtyBtn = {
+    width: 24,
+    height: 24,
+    borderRadius: 6,
+    background: "rgba(172,82,8,0.15)",
+    border: "1px solid rgba(172,82,8,0.25)",
+    color: "var(--accent)",
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    transition: "all .15s",
+  };
+
   return (
     <div
       style={{
@@ -147,8 +167,10 @@ export default function NewSalePage() {
         gap: 14,
         height: "calc(100vh - 110px)",
         overflow: "hidden",
+        fontFamily: "'Open Sans', sans-serif",
       }}
     >
+      {/* ══ LEFT COLUMN ══════════════════════════════════════════ */}
       <div
         style={{
           flex: 1,
@@ -159,6 +181,7 @@ export default function NewSalePage() {
           minWidth: 0,
         }}
       >
+        {/* Product search bar */}
         <div
           style={{
             display: "flex",
@@ -173,47 +196,66 @@ export default function NewSalePage() {
                 display: "flex",
                 alignItems: "center",
                 gap: 8,
-                background: T.bg3,
-                border: `1px solid ${showProductSearch ? T.gold : T.border}`,
+                background: "var(--surface)",
+                border: `1px solid ${showProductSearch ? "var(--accent)" : "var(--border)"}`,
                 borderRadius: 9,
                 padding: "0 12px",
-                height: 38,
-                transition: "border-color .15s",
+                height: 40,
+                transition: "border-color .15s, box-shadow .15s",
+                boxShadow: showProductSearch
+                  ? "0 0 0 3px rgba(172,82,8,0.12)"
+                  : "none",
                 cursor: "pointer",
               }}
               onClick={() => setShowProductSearch(true)}
             >
-              <span style={{ color: T.textMut }}>
+              <span style={{ color: "var(--text-muted)" }}>
                 <Ic.Search />
               </span>
               <input
                 value={productSearch}
                 onChange={(e) => setProductSearch(e.target.value)}
                 onFocus={() => setShowProductSearch(true)}
-                placeholder="🔍  Search product by name or SKU code..."
+                placeholder="Search product by name or SKU code..."
                 style={{
                   flex: 1,
                   background: "none",
                   border: "none",
                   outline: "none",
-                  color: T.text,
+                  color: "var(--text-primary)",
                   fontSize: 12.5,
+                  fontFamily: "'Open Sans', sans-serif",
                 }}
               />
+              <kbd
+                style={{
+                  fontSize: 9,
+                  color: "var(--text-muted)",
+                  background: "var(--bg-secondary)",
+                  border: "1px solid var(--border)",
+                  borderRadius: 4,
+                  padding: "2px 6px",
+                  letterSpacing: "0.05em",
+                }}
+              >
+                ⌘K
+              </kbd>
             </div>
+
             {showProductSearch && (
               <div
                 style={{
+                  ...fadeUp,
                   position: "absolute",
-                  top: 42,
+                  top: 44,
                   left: 0,
                   right: 0,
                   zIndex: 50,
-                  background: "#1a0e06",
-                  border: `1px solid ${T.border}`,
+                  background: "var(--surface)",
+                  border: "1px solid var(--border)",
                   borderRadius: 10,
-                  boxShadow: "0 16px 50px rgba(0,0,0,0.5)",
-                  maxHeight: 280,
+                  boxShadow: "0 20px 60px rgba(4,13,28,0.6)",
+                  maxHeight: 300,
                   overflowY: "auto",
                 }}
               >
@@ -227,10 +269,11 @@ export default function NewSalePage() {
                       gap: 10,
                       padding: "10px 14px",
                       cursor: "pointer",
-                      borderBottom: `1px solid ${T.border}`,
+                      borderBottom: "1px solid var(--border)",
+                      transition: "background .12s",
                     }}
                     onMouseEnter={(e) =>
-                      (e.currentTarget.style.background = "rgba(139,90,43,0.1)")
+                      (e.currentTarget.style.background = "rgba(172,82,8,0.08)")
                     }
                     onMouseLeave={(e) =>
                       (e.currentTarget.style.background = "transparent")
@@ -239,26 +282,35 @@ export default function NewSalePage() {
                     <span style={{ fontSize: 24 }}>{p.img}</span>
                     <div style={{ flex: 1 }}>
                       <div
-                        style={{ color: T.text, fontWeight: 600, fontSize: 12 }}
+                        style={{
+                          color: "var(--text-primary)",
+                          fontWeight: 600,
+                          fontSize: 12,
+                        }}
                       >
                         {p.name}
                       </div>
                       <div style={{ display: "flex", gap: 8 }}>
-                        <span style={{ color: T.gold, fontSize: 10 }}>
+                        <span
+                          style={{
+                            color: "var(--accent)",
+                            fontSize: 10,
+                            fontWeight: 700,
+                          }}
+                        >
                           {p.sku}
                         </span>
-                        <span style={{ color: T.textMut, fontSize: 10 }}>
-                          •
-                        </span>
-                        <span style={{ color: T.textSub, fontSize: 10 }}>
-                          Stock: {p.stock}
+                        <span
+                          style={{ color: "var(--text-muted)", fontSize: 10 }}
+                        >
+                          • Stock: {p.stock}
                         </span>
                       </div>
                     </div>
                     <div style={{ textAlign: "right" }}>
                       <div
                         style={{
-                          color: T.amber,
+                          color: "var(--green)",
                           fontWeight: 700,
                           fontSize: 12,
                         }}
@@ -283,8 +335,8 @@ export default function NewSalePage() {
                 {filteredProducts.length === 0 && (
                   <div
                     style={{
-                      padding: "16px",
-                      color: T.textSub,
+                      padding: 20,
+                      color: "var(--text-muted)",
                       textAlign: "center",
                       fontSize: 12,
                     }}
@@ -295,7 +347,7 @@ export default function NewSalePage() {
                 <div
                   style={{
                     padding: "8px 14px",
-                    borderTop: `1px solid ${T.border}`,
+                    borderTop: "1px solid var(--border)",
                   }}
                 >
                   <button
@@ -303,7 +355,7 @@ export default function NewSalePage() {
                     style={{
                       background: "none",
                       border: "none",
-                      color: T.textSub,
+                      color: "var(--text-muted)",
                       fontSize: 11,
                       cursor: "pointer",
                     }}
@@ -314,6 +366,7 @@ export default function NewSalePage() {
               </div>
             )}
           </div>
+
           {selectedRows.size > 0 && (
             <Btn variant="danger" size="sm" onClick={removeSelected}>
               <Ic.Trash /> Remove {selectedRows.size}
@@ -321,6 +374,7 @@ export default function NewSalePage() {
           )}
         </div>
 
+        {/* Items table card */}
         <div
           style={{
             ...card(),
@@ -330,10 +384,11 @@ export default function NewSalePage() {
             flexDirection: "column",
           }}
         >
+          {/* Table header */}
           <div
             style={{
               padding: "12px 16px",
-              borderBottom: `1px solid ${T.border}`,
+              borderBottom: "1px solid var(--border)",
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
@@ -343,7 +398,7 @@ export default function NewSalePage() {
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <h3
                 style={{
-                  color: T.text,
+                  color: "var(--text-primary)",
                   fontWeight: 700,
                   fontSize: 13,
                   margin: 0,
@@ -352,7 +407,7 @@ export default function NewSalePage() {
                 Sale Items
               </h3>
               {selectedItems.length > 0 && (
-                <Badge color="gold" small>
+                <Badge color="green" small>
                   {selectedItems.length} products • {totalQty} qty
                 </Badge>
               )}
@@ -369,7 +424,7 @@ export default function NewSalePage() {
               flex: 1,
               overflowY: "auto",
               scrollbarWidth: "thin",
-              scrollbarColor: "#3a2010 transparent",
+              scrollbarColor: "rgba(172,82,8,0.3) transparent",
             }}
           >
             {selectedItems.length === 0 ? (
@@ -384,10 +439,10 @@ export default function NewSalePage() {
                   padding: 40,
                 }}
               >
-                <span style={{ fontSize: 50 }}>🛋️</span>
+                <span style={{ fontSize: 48 }}>🛒</span>
                 <p
                   style={{
-                    color: T.textSub,
+                    color: "var(--text-muted)",
                     fontSize: 13,
                     margin: 0,
                     textAlign: "center",
@@ -404,7 +459,7 @@ export default function NewSalePage() {
                   style={{
                     position: "sticky",
                     top: 0,
-                    background: T.bg2,
+                    background: "var(--bg-secondary)",
                     zIndex: 1,
                   }}
                 >
@@ -417,7 +472,10 @@ export default function NewSalePage() {
                           selectedItems.length > 0
                         }
                         onChange={toggleAll}
-                        style={{ cursor: "pointer", accentColor: T.gold }}
+                        style={{
+                          cursor: "pointer",
+                          accentColor: "var(--accent)",
+                        }}
                       />
                     </th>
                     {[
@@ -431,18 +489,18 @@ export default function NewSalePage() {
                         key={h}
                         style={{
                           padding: "10px 10px",
-                          color: T.textMut,
+                          color: "var(--text-muted)",
                           fontSize: 9.5,
-                          fontWeight: 600,
+                          fontWeight: 700,
                           textAlign: "left",
                           letterSpacing: "0.07em",
-                          borderBottom: `1px solid ${T.border}`,
+                          borderBottom: "1px solid var(--border)",
                         }}
                       >
                         {h.toUpperCase()}
                       </th>
                     ))}
-                    <th style={{ padding: "10px 10px", width: 40 }}></th>
+                    <th style={{ padding: "10px 10px", width: 40 }} />
                   </tr>
                 </thead>
                 <tbody>
@@ -454,11 +512,11 @@ export default function NewSalePage() {
                         key={item.id}
                         onClick={() => setPreviewProduct(item)}
                         style={{
-                          borderBottom: `1px solid ${T.border}`,
+                          borderBottom: "1px solid var(--border)",
                           background: isSelected
-                            ? "rgba(205,133,63,0.08)"
+                            ? "rgba(172,82,8,0.08)"
                             : isPreview
-                              ? "rgba(139,90,43,0.06)"
+                              ? "rgba(34,197,94,0.05)"
                               : "transparent",
                           cursor: "pointer",
                           transition: "background .12s",
@@ -466,7 +524,7 @@ export default function NewSalePage() {
                         onMouseEnter={(e) => {
                           if (!isSelected && !isPreview)
                             e.currentTarget.style.background =
-                              "rgba(139,90,43,0.05)";
+                              "rgba(255,255,255,0.02)";
                         }}
                         onMouseLeave={(e) => {
                           if (!isSelected && !isPreview)
@@ -479,7 +537,10 @@ export default function NewSalePage() {
                             checked={isSelected}
                             onChange={() => toggleRow(item.id)}
                             onClick={(e) => e.stopPropagation()}
-                            style={{ cursor: "pointer", accentColor: T.gold }}
+                            style={{
+                              cursor: "pointer",
+                              accentColor: "var(--accent)",
+                            }}
                           />
                         </td>
                         <td style={{ padding: "10px 10px" }}>
@@ -495,7 +556,8 @@ export default function NewSalePage() {
                                 width: 32,
                                 height: 32,
                                 borderRadius: 8,
-                                background: "rgba(139,90,43,0.15)",
+                                background: "rgba(34,197,94,0.08)",
+                                border: "1px solid rgba(34,197,94,0.15)",
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "center",
@@ -508,7 +570,7 @@ export default function NewSalePage() {
                             <div>
                               <div
                                 style={{
-                                  color: T.text,
+                                  color: "var(--text-primary)",
                                   fontWeight: 600,
                                   fontSize: 12,
                                   lineHeight: 1.2,
@@ -516,7 +578,12 @@ export default function NewSalePage() {
                               >
                                 {item.name}
                               </div>
-                              <div style={{ color: T.textSub, fontSize: 10 }}>
+                              <div
+                                style={{
+                                  color: "var(--text-muted)",
+                                  fontSize: 10,
+                                }}
+                              >
                                 {item.category}
                               </div>
                             </div>
@@ -525,7 +592,7 @@ export default function NewSalePage() {
                         <td style={{ padding: "10px 10px" }}>
                           <span
                             style={{
-                              color: T.gold,
+                              color: "var(--accent)",
                               fontWeight: 700,
                               fontSize: 11,
                               fontFamily: "monospace",
@@ -537,7 +604,7 @@ export default function NewSalePage() {
                         <td style={{ padding: "10px 10px" }}>
                           <span
                             style={{
-                              color: T.amber,
+                              color: "var(--green)",
                               fontWeight: 700,
                               fontSize: 12,
                             }}
@@ -558,18 +625,7 @@ export default function NewSalePage() {
                                 e.stopPropagation();
                                 updateQty(item.id, item.qty - 1);
                               }}
-                              style={{
-                                width: 24,
-                                height: 24,
-                                borderRadius: 6,
-                                background: "rgba(139,90,43,0.2)",
-                                border: "none",
-                                color: T.gold,
-                                cursor: "pointer",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                              }}
+                              style={qtyBtn}
                             >
                               <Ic.Minus />
                             </button>
@@ -585,10 +641,10 @@ export default function NewSalePage() {
                               style={{
                                 width: 38,
                                 textAlign: "center",
-                                background: T.bg3,
-                                border: `1px solid ${T.border}`,
+                                background: "var(--bg-secondary)",
+                                border: "1px solid var(--border)",
                                 borderRadius: 6,
-                                color: T.text,
+                                color: "var(--text-primary)",
                                 fontSize: 12,
                                 fontWeight: 700,
                                 padding: "3px 4px",
@@ -600,18 +656,7 @@ export default function NewSalePage() {
                                 e.stopPropagation();
                                 updateQty(item.id, item.qty + 1);
                               }}
-                              style={{
-                                width: 24,
-                                height: 24,
-                                borderRadius: 6,
-                                background: "rgba(139,90,43,0.2)",
-                                border: "none",
-                                color: T.gold,
-                                cursor: "pointer",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                              }}
+                              style={qtyBtn}
                             >
                               <Ic.Plus />
                             </button>
@@ -620,7 +665,7 @@ export default function NewSalePage() {
                         <td style={{ padding: "10px 10px" }}>
                           <span
                             style={{
-                              color: T.text,
+                              color: "var(--text-primary)",
                               fontWeight: 700,
                               fontSize: 12,
                             }}
@@ -637,7 +682,7 @@ export default function NewSalePage() {
                             style={{
                               background: "rgba(248,113,113,0.08)",
                               border: "1px solid rgba(248,113,113,0.2)",
-                              color: T.red,
+                              color: "#f87171",
                               borderRadius: 6,
                               width: 26,
                               height: 26,
@@ -645,7 +690,16 @@ export default function NewSalePage() {
                               display: "flex",
                               alignItems: "center",
                               justifyContent: "center",
+                              transition: "all .15s",
                             }}
+                            onMouseEnter={(e) =>
+                              (e.currentTarget.style.background =
+                                "rgba(248,113,113,0.18)")
+                            }
+                            onMouseLeave={(e) =>
+                              (e.currentTarget.style.background =
+                                "rgba(248,113,113,0.08)")
+                            }
                           >
                             <Ic.Trash />
                           </button>
@@ -654,25 +708,26 @@ export default function NewSalePage() {
                     );
                   })}
                 </tbody>
-                <tfoot style={{ background: T.bg2 }}>
+                <tfoot style={{ background: "var(--bg-secondary)" }}>
                   <tr>
                     <td colSpan={2} />
                     <td style={{ padding: "10px 10px" }}>
                       <span
                         style={{
-                          color: T.textSub,
+                          color: "var(--text-muted)",
                           fontSize: 10,
-                          fontWeight: 600,
+                          fontWeight: 700,
+                          letterSpacing: "0.06em",
                         }}
                       >
                         TOTAL QTY
                       </span>
                     </td>
-                    <td style={{ padding: "10px 10px" }} />
+                    <td />
                     <td style={{ padding: "10px 10px" }}>
                       <span
                         style={{
-                          color: T.amber,
+                          color: "var(--green)",
                           fontWeight: 800,
                           fontSize: 13,
                         }}
@@ -683,7 +738,7 @@ export default function NewSalePage() {
                     <td style={{ padding: "10px 10px" }}>
                       <span
                         style={{
-                          color: T.amber,
+                          color: "var(--green)",
                           fontWeight: 800,
                           fontSize: 13,
                         }}
@@ -700,6 +755,7 @@ export default function NewSalePage() {
         </div>
       </div>
 
+      {/* ══ RIGHT PANEL ══════════════════════════════════════════ */}
       <div
         style={{
           width: 330,
@@ -709,14 +765,15 @@ export default function NewSalePage() {
           overflow: "hidden",
         }}
       >
+        {/* Product preview */}
         {previewProduct && (
-          <div style={{ ...card(), padding: "14px", flexShrink: 0 }}>
+          <div style={{ ...card(), padding: 14, flexShrink: 0 }}>
             <p
               style={{
-                color: T.textMut,
+                color: "var(--text-muted)",
                 fontSize: 9,
-                fontWeight: 600,
-                letterSpacing: "0.08em",
+                fontWeight: 700,
+                letterSpacing: "0.1em",
                 margin: "0 0 8px",
               }}
             >
@@ -728,14 +785,13 @@ export default function NewSalePage() {
                   width: 60,
                   height: 60,
                   borderRadius: 10,
-                  background:
-                    "linear-gradient(135deg,rgba(139,90,43,0.2),rgba(205,133,63,0.1))",
+                  background: "rgba(34,197,94,0.08)",
+                  border: "1px solid rgba(34,197,94,0.2)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   fontSize: 30,
                   flexShrink: 0,
-                  border: `1px solid rgba(139,90,43,0.25)`,
                 }}
               >
                 {previewProduct.img}
@@ -743,31 +799,39 @@ export default function NewSalePage() {
               <div style={{ flex: 1, minWidth: 0 }}>
                 <p
                   style={{
-                    color: T.text,
+                    color: "var(--text-primary)",
                     fontWeight: 700,
                     fontSize: 12.5,
-                    margin: "0 0 3px",
+                    margin: "0 0 4px",
                     lineHeight: 1.2,
                   }}
                 >
                   {previewProduct.name}
                 </p>
                 <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                  <Badge color="gold" small>
+                  <Badge color="accent" small>
                     {previewProduct.sku}
                   </Badge>
                   <Badge color="blue" small>
                     {previewProduct.category}
                   </Badge>
                 </div>
-                <div style={{ display: "flex", gap: 10, marginTop: 6 }}>
+                <div style={{ display: "flex", gap: 14, marginTop: 6 }}>
                   <div>
-                    <p style={{ color: T.textMut, fontSize: 9, margin: 0 }}>
+                    <p
+                      style={{
+                        color: "var(--text-muted)",
+                        fontSize: 9,
+                        margin: 0,
+                        fontWeight: 600,
+                        letterSpacing: "0.07em",
+                      }}
+                    >
                       SELL PRICE
                     </p>
                     <p
                       style={{
-                        color: T.amber,
+                        color: "var(--green)",
                         fontWeight: 800,
                         fontSize: 13,
                         margin: 0,
@@ -777,12 +841,23 @@ export default function NewSalePage() {
                     </p>
                   </div>
                   <div>
-                    <p style={{ color: T.textMut, fontSize: 9, margin: 0 }}>
+                    <p
+                      style={{
+                        color: "var(--text-muted)",
+                        fontSize: 9,
+                        margin: 0,
+                        fontWeight: 600,
+                        letterSpacing: "0.07em",
+                      }}
+                    >
                       STOCK
                     </p>
                     <p
                       style={{
-                        color: previewProduct.stock <= 4 ? T.red : T.green,
+                        color:
+                          previewProduct.stock <= 4
+                            ? "#f87171"
+                            : "var(--green)",
                         fontWeight: 800,
                         fontSize: 13,
                         margin: 0,
@@ -797,6 +872,7 @@ export default function NewSalePage() {
           </div>
         )}
 
+        {/* Scrollable right panels */}
         <div
           style={{
             flex: 1,
@@ -805,9 +881,10 @@ export default function NewSalePage() {
             flexDirection: "column",
             gap: 10,
             scrollbarWidth: "thin",
-            scrollbarColor: "#3a2010 transparent",
+            scrollbarColor: "rgba(172,82,8,0.3) transparent",
           }}
         >
+          {/* Customer */}
           <div style={{ ...card(), padding: "12px 14px" }}>
             <div
               style={{
@@ -819,10 +896,10 @@ export default function NewSalePage() {
             >
               <p
                 style={{
-                  color: T.textMut,
+                  color: "var(--text-muted)",
                   fontSize: 9.5,
-                  fontWeight: 600,
-                  letterSpacing: "0.08em",
+                  fontWeight: 700,
+                  letterSpacing: "0.1em",
                   margin: 0,
                 }}
               >
@@ -831,14 +908,15 @@ export default function NewSalePage() {
               <button
                 onClick={() => setShowCustomerModal(true)}
                 style={{
-                  background: "rgba(96,165,250,0.12)",
-                  border: "1px solid rgba(96,165,250,0.25)",
-                  color: T.blue,
+                  background: "rgba(96,165,250,0.1)",
+                  border: "1px solid rgba(96,165,250,0.22)",
+                  color: "#60a5fa",
                   fontSize: 9.5,
                   fontWeight: 700,
                   padding: "3px 9px",
                   borderRadius: 20,
                   cursor: "pointer",
+                  fontFamily: "'Open Sans', sans-serif",
                 }}
               >
                 + New Customer
@@ -851,9 +929,9 @@ export default function NewSalePage() {
                   alignItems: "center",
                   gap: 9,
                   padding: "8px 10px",
-                  background: "rgba(74,222,128,0.07)",
+                  background: "rgba(34,197,94,0.07)",
                   borderRadius: 8,
-                  border: "1px solid rgba(74,222,128,0.2)",
+                  border: "1px solid rgba(34,197,94,0.2)",
                 }}
               >
                 <div
@@ -861,7 +939,7 @@ export default function NewSalePage() {
                     width: 32,
                     height: 32,
                     borderRadius: 8,
-                    background: "linear-gradient(135deg,#cd853f,#7a3e10)",
+                    background: "linear-gradient(135deg,var(--accent),#7a3a06)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -876,7 +954,7 @@ export default function NewSalePage() {
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <p
                     style={{
-                      color: T.text,
+                      color: "var(--text-primary)",
                       fontWeight: 700,
                       fontSize: 11.5,
                       margin: 0,
@@ -887,7 +965,13 @@ export default function NewSalePage() {
                   >
                     {customer.name}
                   </p>
-                  <p style={{ color: T.textSub, fontSize: 10, margin: 0 }}>
+                  <p
+                    style={{
+                      color: "var(--text-secondary)",
+                      fontSize: 10,
+                      margin: 0,
+                    }}
+                  >
                     {customer.phone} • {customer.type}
                   </p>
                 </div>
@@ -897,7 +981,7 @@ export default function NewSalePage() {
                     background: "none",
                     border: "none",
                     cursor: "pointer",
-                    color: T.textMut,
+                    color: "var(--text-muted)",
                   }}
                 >
                   <Ic.Close />
@@ -910,14 +994,17 @@ export default function NewSalePage() {
                     display: "flex",
                     alignItems: "center",
                     gap: 8,
-                    background: T.bg3,
-                    border: `1px solid ${showCustomerDropdown ? T.gold : T.border}`,
+                    background: "var(--bg-secondary)",
+                    border: `1px solid ${showCustomerDropdown ? "var(--accent)" : "var(--border)"}`,
                     borderRadius: 8,
                     padding: "8px 10px",
                     transition: "border-color .15s",
+                    boxShadow: showCustomerDropdown
+                      ? "0 0 0 3px rgba(172,82,8,0.1)"
+                      : "none",
                   }}
                 >
-                  <span style={{ color: T.textMut }}>
+                  <span style={{ color: "var(--text-muted)" }}>
                     <Ic.User />
                   </span>
                   <input
@@ -930,25 +1017,27 @@ export default function NewSalePage() {
                       background: "none",
                       border: "none",
                       outline: "none",
-                      color: T.text,
+                      color: "var(--text-primary)",
                       fontSize: 12,
+                      fontFamily: "'Open Sans', sans-serif",
                     }}
                   />
                 </div>
                 {showCustomerDropdown && (
                   <div
                     style={{
+                      ...fadeUp,
                       position: "absolute",
-                      top: 38,
+                      top: 40,
                       left: 0,
                       right: 0,
-                      background: "#1a0e06",
-                      border: `1px solid ${T.border}`,
+                      background: "var(--surface)",
+                      border: "1px solid var(--border)",
                       borderRadius: 8,
                       zIndex: 50,
                       maxHeight: 200,
                       overflowY: "auto",
-                      boxShadow: "0 12px 40px rgba(0,0,0,0.5)",
+                      boxShadow: "0 16px 50px rgba(4,13,28,0.6)",
                     }}
                   >
                     <div
@@ -963,21 +1052,23 @@ export default function NewSalePage() {
                       style={{
                         padding: "9px 12px",
                         cursor: "pointer",
-                        borderBottom: `1px solid ${T.border}`,
+                        borderBottom: "1px solid var(--border)",
                         display: "flex",
                         gap: 8,
                         alignItems: "center",
                       }}
                       onMouseEnter={(e) =>
                         (e.currentTarget.style.background =
-                          "rgba(139,90,43,0.1)")
+                          "rgba(172,82,8,0.08)")
                       }
                       onMouseLeave={(e) =>
                         (e.currentTarget.style.background = "transparent")
                       }
                     >
                       <span style={{ fontSize: 16 }}>🚶</span>
-                      <span style={{ color: T.text, fontSize: 12 }}>
+                      <span
+                        style={{ color: "var(--text-primary)", fontSize: 12 }}
+                      >
                         Walk-in Customer
                       </span>
                     </div>
@@ -992,11 +1083,11 @@ export default function NewSalePage() {
                         style={{
                           padding: "9px 12px",
                           cursor: "pointer",
-                          borderBottom: `1px solid ${T.border}`,
+                          borderBottom: "1px solid var(--border)",
                         }}
                         onMouseEnter={(e) =>
                           (e.currentTarget.style.background =
-                            "rgba(139,90,43,0.1)")
+                            "rgba(172,82,8,0.08)")
                         }
                         onMouseLeave={(e) =>
                           (e.currentTarget.style.background = "transparent")
@@ -1004,14 +1095,19 @@ export default function NewSalePage() {
                       >
                         <div
                           style={{
-                            color: T.text,
+                            color: "var(--text-primary)",
                             fontSize: 12,
                             fontWeight: 600,
                           }}
                         >
                           {c.name}
                         </div>
-                        <div style={{ color: T.textSub, fontSize: 10 }}>
+                        <div
+                          style={{
+                            color: "var(--text-secondary)",
+                            fontSize: 10,
+                          }}
+                        >
                           {c.code} • {c.phone}
                         </div>
                       </div>
@@ -1022,13 +1118,14 @@ export default function NewSalePage() {
             )}
           </div>
 
+          {/* Sale Details */}
           <div style={{ ...card(), padding: "12px 14px" }}>
             <p
               style={{
-                color: T.textMut,
+                color: "var(--text-muted)",
                 fontSize: 9.5,
-                fontWeight: 600,
-                letterSpacing: "0.08em",
+                fontWeight: 700,
+                letterSpacing: "0.1em",
                 margin: "0 0 10px",
               }}
             >
@@ -1060,23 +1157,25 @@ export default function NewSalePage() {
             </div>
           </div>
 
+          {/* Payment & Discounts */}
           <div style={{ ...card(), padding: "12px 14px" }}>
             <p
               style={{
-                color: T.textMut,
+                color: "var(--text-muted)",
                 fontSize: 9.5,
-                fontWeight: 600,
-                letterSpacing: "0.08em",
+                fontWeight: 700,
+                letterSpacing: "0.1em",
                 margin: "0 0 10px",
               }}
             >
               PAYMENT & DISCOUNTS
             </p>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {/* Payment type */}
               <div>
                 <label
                   style={{
-                    color: T.textSub,
+                    color: "var(--text-secondary)",
                     fontSize: 10,
                     fontWeight: 600,
                     letterSpacing: "0.07em",
@@ -1088,9 +1187,9 @@ export default function NewSalePage() {
                 </label>
                 <div style={{ display: "flex", gap: 6 }}>
                   {[
-                    ["cash", "💵 Cash", <Ic.Cash />],
-                    ["bank_transfer", "🏦 Bank", <Ic.Card />],
-                    ["mixed", "⚡ Mixed", <Ic.Cash />],
+                    ["cash", "💵 Cash"],
+                    ["bank_transfer", "🏦 Bank"],
+                    ["mixed", "⚡ Mixed"],
                   ].map(([val, lbl]) => (
                     <button
                       key={val}
@@ -1102,13 +1201,21 @@ export default function NewSalePage() {
                         cursor: "pointer",
                         fontSize: 10.5,
                         fontWeight: 700,
+                        fontFamily: "'Open Sans', sans-serif",
                         background:
                           paymentType === val
-                            ? "linear-gradient(135deg,#c0712a,#8b3e10)"
-                            : "rgba(139,90,43,0.1)",
-                        border: `1px solid ${paymentType === val ? "transparent" : T.border}`,
-                        color: paymentType === val ? "#fff" : T.textSub,
+                            ? "var(--accent)"
+                            : "var(--bg-secondary)",
+                        border: `1px solid ${paymentType === val ? "var(--accent)" : "var(--border)"}`,
+                        color:
+                          paymentType === val
+                            ? "#fff"
+                            : "var(--text-secondary)",
                         transition: "all .15s",
+                        boxShadow:
+                          paymentType === val
+                            ? "0 2px 10px rgba(172,82,8,0.35)"
+                            : "none",
                       }}
                     >
                       {lbl}
@@ -1117,10 +1224,11 @@ export default function NewSalePage() {
                 </div>
               </div>
 
+              {/* Discount */}
               <div>
                 <label
                   style={{
-                    color: T.textSub,
+                    color: "var(--text-secondary)",
                     fontSize: 10,
                     fontWeight: 600,
                     letterSpacing: "0.07em",
@@ -1135,22 +1243,19 @@ export default function NewSalePage() {
                     value={discountType}
                     onChange={(e) => setDiscountType(e.target.value)}
                     style={{
-                      background: T.bg3,
-                      border: `1px solid ${T.border}`,
+                      background: "var(--bg-secondary)",
+                      border: "1px solid var(--border)",
                       borderRadius: 7,
                       padding: "7px 8px",
-                      color: T.text,
+                      color: "var(--text-primary)",
                       fontSize: 11,
                       outline: "none",
                       cursor: "pointer",
+                      fontFamily: "'Open Sans', sans-serif",
                     }}
                   >
-                    <option value="percentage" style={{ background: T.bg3 }}>
-                      %
-                    </option>
-                    <option value="fixed" style={{ background: T.bg3 }}>
-                      ৳ Fixed
-                    </option>
+                    <option value="percentage">%</option>
+                    <option value="fixed">৳ Fixed</option>
                   </select>
                   <input
                     value={discountValue}
@@ -1159,14 +1264,15 @@ export default function NewSalePage() {
                     min="0"
                     style={{
                       flex: 1,
-                      background: T.bg3,
-                      border: `1px solid ${T.border}`,
+                      background: "var(--bg-secondary)",
+                      border: "1px solid var(--border)",
                       borderRadius: 7,
                       padding: "7px 10px",
-                      color: T.amber,
+                      color: "var(--accent)",
                       fontSize: 13,
                       fontWeight: 700,
                       outline: "none",
+                      fontFamily: "'Open Sans', sans-serif",
                     }}
                   />
                 </div>
@@ -1176,7 +1282,7 @@ export default function NewSalePage() {
                 <div style={{ flex: 1 }}>
                   <label
                     style={{
-                      color: T.textSub,
+                      color: "var(--text-secondary)",
                       fontSize: 10,
                       fontWeight: 600,
                       letterSpacing: "0.07em",
@@ -1193,21 +1299,22 @@ export default function NewSalePage() {
                     min="0"
                     style={{
                       width: "100%",
-                      background: T.bg3,
-                      border: `1px solid ${T.border}`,
+                      background: "var(--bg-secondary)",
+                      border: "1px solid var(--border)",
                       borderRadius: 7,
                       padding: "7px 10px",
-                      color: T.text,
+                      color: "var(--text-primary)",
                       fontSize: 12,
                       outline: "none",
                       boxSizing: "border-box",
+                      fontFamily: "'Open Sans', sans-serif",
                     }}
                   />
                 </div>
                 <div style={{ flex: 1 }}>
                   <label
                     style={{
-                      color: T.textSub,
+                      color: "var(--text-secondary)",
                       fontSize: 10,
                       fontWeight: 600,
                       letterSpacing: "0.07em",
@@ -1225,15 +1332,16 @@ export default function NewSalePage() {
                     placeholder={String(netTotal)}
                     style={{
                       width: "100%",
-                      background: T.bg3,
-                      border: `1px solid rgba(74,222,128,0.3)`,
+                      background: "var(--bg-secondary)",
+                      border: "1px solid rgba(34,197,94,0.3)",
                       borderRadius: 7,
                       padding: "7px 10px",
-                      color: T.green,
+                      color: "var(--green)",
                       fontSize: 12,
                       fontWeight: 700,
                       outline: "none",
                       boxSizing: "border-box",
+                      fontFamily: "'Open Sans', sans-serif",
                     }}
                   />
                 </div>
@@ -1241,32 +1349,38 @@ export default function NewSalePage() {
             </div>
           </div>
 
+          {/* Bill Summary */}
           <div
             style={{
               ...card(),
               padding: "12px 14px",
-              background: "linear-gradient(135deg,#1e1208,#2a1a0a)",
+              background: "var(--surface-alt)",
+              borderColor: "rgba(34,197,94,0.12)",
             }}
           >
             <p
               style={{
-                color: T.textMut,
+                color: "var(--text-muted)",
                 fontSize: 9.5,
-                fontWeight: 600,
-                letterSpacing: "0.08em",
+                fontWeight: 700,
+                letterSpacing: "0.1em",
                 margin: "0 0 10px",
               }}
             >
               BILL SUMMARY
             </p>
             {[
-              ["Subtotal", `৳${subtotal.toLocaleString()}`, T.text],
+              [
+                "Subtotal",
+                `৳${subtotal.toLocaleString()}`,
+                "var(--text-primary)",
+              ],
               [
                 "Discount",
                 `-৳${Math.round(discAmt).toLocaleString()}`,
-                T.yellow,
+                "#fbbf24",
               ],
-              [`VAT (${vat}%)`, `৳${vatAmt.toLocaleString()}`, T.blue],
+              [`VAT (${vat}%)`, `৳${vatAmt.toLocaleString()}`, "#60a5fa"],
             ].map(([l, v, c]) => (
               <div
                 key={l}
@@ -1276,13 +1390,23 @@ export default function NewSalePage() {
                   padding: "4px 0",
                 }}
               >
-                <span style={{ color: T.textSub, fontSize: 11.5 }}>{l}</span>
+                <span
+                  style={{ color: "var(--text-secondary)", fontSize: 11.5 }}
+                >
+                  {l}
+                </span>
                 <span style={{ color: c, fontWeight: 600, fontSize: 11.5 }}>
                   {v}
                 </span>
               </div>
             ))}
-            <div style={{ height: 1, background: T.border, margin: "8px 0" }} />
+            <div
+              style={{
+                height: 1,
+                background: "var(--border)",
+                margin: "8px 0",
+              }}
+            />
             <div
               style={{
                 display: "flex",
@@ -1290,22 +1414,36 @@ export default function NewSalePage() {
                 padding: "2px 0",
               }}
             >
-              <span style={{ color: T.text, fontWeight: 800, fontSize: 14 }}>
+              <span
+                style={{
+                  color: "var(--text-primary)",
+                  fontWeight: 800,
+                  fontSize: 14,
+                }}
+              >
                 NET TOTAL
               </span>
-              <span style={{ color: T.amber, fontWeight: 900, fontSize: 18 }}>
+              <span
+                style={{ color: "var(--green)", fontWeight: 900, fontSize: 20 }}
+              >
                 ৳{netTotal.toLocaleString()}
               </span>
             </div>
-            <div style={{ height: 1, background: T.border, margin: "8px 0" }} />
+            <div
+              style={{
+                height: 1,
+                background: "var(--border)",
+                margin: "8px 0",
+              }}
+            />
             {[
-              ["Total Qty", String(totalQty), T.text],
-              ["Paid Amount", `৳${paid.toLocaleString()}`, T.green],
+              ["Total Qty", String(totalQty), "var(--text-primary)"],
+              ["Paid Amount", `৳${paid.toLocaleString()}`, "var(--green)"],
               ...(change > 0
-                ? [["Change", `৳${change.toLocaleString()}`, T.blue]]
+                ? [["Change", `৳${change.toLocaleString()}`, "#60a5fa"]]
                 : []),
               ...(due > 0
-                ? [["Due Amount", `৳${due.toLocaleString()}`, T.red]]
+                ? [["Due Amount", `৳${due.toLocaleString()}`, "#f87171"]]
                 : []),
             ].map(([l, v, c]) => (
               <div
@@ -1316,7 +1454,11 @@ export default function NewSalePage() {
                   padding: "3px 0",
                 }}
               >
-                <span style={{ color: T.textSub, fontSize: 11.5 }}>{l}</span>
+                <span
+                  style={{ color: "var(--text-secondary)", fontSize: 11.5 }}
+                >
+                  {l}
+                </span>
                 <span style={{ color: c, fontWeight: 700, fontSize: 12 }}>
                   {v}
                 </span>
@@ -1325,6 +1467,7 @@ export default function NewSalePage() {
           </div>
         </div>
 
+        {/* Action buttons */}
         <div
           style={{
             display: "flex",
@@ -1339,7 +1482,7 @@ export default function NewSalePage() {
             style={{
               width: "100%",
               justifyContent: "center",
-              padding: "11px",
+              padding: 11,
               fontSize: 13,
               borderRadius: 10,
             }}
@@ -1349,13 +1492,13 @@ export default function NewSalePage() {
           <div style={{ display: "flex", gap: 7 }}>
             <Btn
               variant="ghost"
-              style={{ flex: 1, justifyContent: "center", padding: "9px" }}
+              style={{ flex: 1, justifyContent: "center", padding: 9 }}
             >
               <Ic.Print /> Print
             </Btn>
             <Btn
               variant="danger"
-              style={{ flex: 1, justifyContent: "center", padding: "9px" }}
+              style={{ flex: 1, justifyContent: "center", padding: 9 }}
               onClick={() => {
                 setSelectedItems([]);
                 setCustomer(null);

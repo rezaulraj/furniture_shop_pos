@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import { useNavigate, useLocation } from "react-router-dom";
 
-// ── Custom SVG Icons ────────────────────────────────────────────────
+// ── SVG Icon helper ─────────────────────────────────────────────────
 const Icon = ({ d, size = 20, stroke = false, className = "" }) => (
   <svg
     width={size}
@@ -84,22 +84,6 @@ const Icons = {
       ]}
     />
   ),
-  Transfer: () => (
-    <Icon
-      stroke
-      size={20}
-      d={["M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"]}
-    />
-  ),
-  Damage: () => (
-    <Icon
-      stroke
-      size={20}
-      d={[
-        "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z",
-      ]}
-    />
-  ),
   Expense: () => (
     <Icon
       stroke
@@ -159,38 +143,17 @@ const Icons = {
   ),
   Menu: () => <Icon stroke size={22} d="M4 6h16M4 12h16M4 18h16" />,
   Close: () => <Icon stroke size={22} d="M6 18L18 6M6 6l12 12" />,
-  Installment: () => (
-    <Icon
-      stroke
-      size={20}
-      d={[
-        "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2",
-        "M9 5a2 2 0 002 2h2a2 2 0 002-2",
-        "M9 5a2 2 0 012-2h2a2 2 0 012 2",
-        "M9 12h6m-6 4h4",
-      ]}
-    />
-  ),
-  Return: () => (
-    <Icon stroke size={20} d={["M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"]} />
-  ),
 };
 
 // ── Nav Data ────────────────────────────────────────────────────────
 const NAV = [
-  {
-    id: 1,
-    label: "Dashboard",
-    icon: <Icons.Dashboard />,
-    path: "/dashboard",
-  },
+  { id: 1, label: "Dashboard", icon: <Icons.Dashboard />, path: "/dashboard" },
   {
     id: 2,
     label: "Sales",
     icon: <Icons.Sale />,
-    accent: "sale",
     subBar: [
-      { id: 21, label: "New Sale", path: "/sales/new", dot: "amber" },
+      { id: 21, label: "New Sale", path: "/sales/new", dot: "green" },
       { id: 22, label: "Sale History", path: "/sales/history" },
       { id: 23, label: "Sale Returns", path: "/sales/returns" },
       { id: 24, label: "Installments", path: "/sales/installments" },
@@ -200,9 +163,8 @@ const NAV = [
     id: 3,
     label: "Purchases",
     icon: <Icons.Purchase />,
-    accent: "purchase",
     subBar: [
-      { id: 31, label: "New Purchase", path: "/purchases/new", dot: "amber" },
+      { id: 31, label: "New Purchase", path: "/purchases/new", dot: "green" },
       { id: 32, label: "Purchase History", path: "/purchases/history" },
       { id: 33, label: "Purchase Returns", path: "/purchases/returns" },
     ],
@@ -294,8 +256,8 @@ const NAV = [
   },
 ];
 
-// ── Sidebar Component ───────────────────────────────────────────────
-const SideBar = ({ isOpen, isMobile, onToggle }) => {
+// ── Sidebar ─────────────────────────────────────────────────────────
+const SideBar = ({ isOpen, isMobile, onToggle, darkMode }) => {
   const [openSubmenus, setOpenSubmenus] = useState({ 2: true });
   const [hoveredItem, setHoveredItem] = useState(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
@@ -303,19 +265,35 @@ const SideBar = ({ isOpen, isMobile, onToggle }) => {
   const location = useLocation();
 
   const toggle = (id) => setOpenSubmenus((p) => ({ ...p, [id]: !p[id] }));
-
   const handleNav = (path) => {
     navigate(path);
     if (isMobile) onToggle();
   };
-
-  const isActive = (item) => {
-    if (item.path) return location.pathname === item.path;
-    if (item.subBar)
-      return item.subBar.some((s) => location.pathname === s.path);
-    return false;
-  };
+  const isActive = (item) =>
+    item.path
+      ? location.pathname === item.path
+      : item.subBar?.some((s) => location.pathname === s.path);
   const isSubActive = (sub) => location.pathname === sub.path;
+
+  // ── Color tokens (light / dark) ──────────────────────────────────
+  const bg = darkMode ? "#040d1c" : "#f0f7f4";
+  const bgSecondary = darkMode ? "#060f22" : "#e4f0eb";
+  const borderClr = darkMode
+    ? "rgba(255,255,255,0.06)"
+    : "rgba(22,120,80,0.12)";
+  const textPrimary = darkMode ? "#f0faff" : "#0a1f14";
+  const textSec = darkMode ? "#a8d4c2" : "#3d7a5a";
+  const textMuted = darkMode ? "#4a7a62" : "#6aaa88";
+  const accent = "#ac5208";
+  const accentHover = "#c96010";
+  const green = darkMode ? "#22c55e" : "#16a34a";
+  const activeRowBg = darkMode ? "rgba(172,82,8,0.16)" : "rgba(22,163,74,0.12)";
+  const activeRowBd = darkMode ? "rgba(172,82,8,0.4)" : "rgba(22,163,74,0.35)";
+  const hoverRowBg = darkMode
+    ? "rgba(255,255,255,0.04)"
+    : "rgba(22,120,80,0.07)";
+  const iconActive = darkMode ? "#22c55e" : "#16a34a";
+  const iconIdle = darkMode ? "#4a7a62" : "#6aaa88";
 
   const tooltip = (label) =>
     ReactDOM.createPortal(
@@ -329,16 +307,17 @@ const SideBar = ({ isOpen, isMobile, onToggle }) => {
       >
         <div
           style={{
-            background: "linear-gradient(135deg,#2d1f0e,#4a2e0a)",
-            color: "#f5deb3",
+            background: darkMode ? "#0a1628" : "#fff",
+            color: textPrimary,
             fontSize: 12,
             fontWeight: 600,
             padding: "6px 14px",
             borderRadius: 8,
-            boxShadow: "0 4px 20px rgba(0,0,0,0.4)",
-            border: "1px solid rgba(205,133,63,0.3)",
+            boxShadow: "0 4px 20px rgba(0,0,0,0.35)",
+            border: `1px solid ${borderClr}`,
             letterSpacing: "0.04em",
             whiteSpace: "nowrap",
+            fontFamily: "'Open Sans', sans-serif",
           }}
         >
           {label}
@@ -351,16 +330,16 @@ const SideBar = ({ isOpen, isMobile, onToggle }) => {
     <div
       className="h-full flex flex-col"
       style={{
-        background:
-          "linear-gradient(180deg, #1a0f05 0%, #2d1a08 40%, #1e1208 100%)",
-        borderRight: "1px solid rgba(139,90,43,0.25)",
+        background: bg,
+        borderRight: `1px solid ${borderClr}`,
+        fontFamily: "'Open Sans', sans-serif",
       }}
     >
-      {/* Logo */}
+      {/* ── Logo / Toggle ── */}
       <div
         style={{
           padding: isOpen ? "20px 18px 16px" : "20px 0 16px",
-          borderBottom: "1px solid rgba(139,90,43,0.2)",
+          borderBottom: `1px solid ${borderClr}`,
           display: "flex",
           alignItems: "center",
           justifyContent: isOpen ? "space-between" : "center",
@@ -368,16 +347,17 @@ const SideBar = ({ isOpen, isMobile, onToggle }) => {
       >
         {isOpen && (
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            {/* Logo icon — green accent */}
             <div
               style={{
                 width: 38,
                 height: 38,
                 borderRadius: 10,
-                background: "linear-gradient(135deg,#cd853f,#8b4513)",
+                background: "linear-gradient(135deg,#22c55e,#16a34a)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                boxShadow: "0 4px 12px rgba(139,69,19,0.5)",
+                boxShadow: "0 4px 14px rgba(34,197,94,0.35)",
                 flexShrink: 0,
               }}
             >
@@ -386,7 +366,7 @@ const SideBar = ({ isOpen, isMobile, onToggle }) => {
                 height="22"
                 viewBox="0 0 24 24"
                 fill="none"
-                stroke="#fdf3e3"
+                stroke="#fff"
                 strokeWidth="1.8"
               >
                 <rect x="3" y="8" width="18" height="4" rx="1" />
@@ -398,21 +378,21 @@ const SideBar = ({ isOpen, isMobile, onToggle }) => {
             <div>
               <div
                 style={{
-                  color: "#f5deb3",
+                  color: textPrimary,
                   fontWeight: 800,
                   fontSize: 15,
                   letterSpacing: "0.03em",
                   lineHeight: 1.1,
                 }}
               >
-                WoodCraft
+                CraftPOS
               </div>
               <div
                 style={{
-                  color: "#a07040",
+                  color: textMuted,
                   fontSize: 10,
-                  fontWeight: 500,
-                  letterSpacing: "0.08em",
+                  fontWeight: 600,
+                  letterSpacing: "0.1em",
                 }}
               >
                 POS SYSTEM
@@ -423,9 +403,11 @@ const SideBar = ({ isOpen, isMobile, onToggle }) => {
         <button
           onClick={onToggle}
           style={{
-            background: "rgba(139,90,43,0.15)",
-            border: "1px solid rgba(139,90,43,0.25)",
-            color: "#cd853f",
+            background: darkMode
+              ? "rgba(255,255,255,0.05)"
+              : "rgba(22,120,80,0.08)",
+            border: `1px solid ${borderClr}`,
+            color: textSec,
             borderRadius: 8,
             padding: 7,
             cursor: "pointer",
@@ -435,30 +417,34 @@ const SideBar = ({ isOpen, isMobile, onToggle }) => {
             transition: "all 0.2s",
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = "rgba(205,133,63,0.25)";
-            e.currentTarget.style.color = "#f5deb3";
+            e.currentTarget.style.background = "rgba(172,82,8,0.2)";
+            e.currentTarget.style.color = accentHover;
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = "rgba(139,90,43,0.15)";
-            e.currentTarget.style.color = "#cd853f";
+            e.currentTarget.style.background = darkMode
+              ? "rgba(255,255,255,0.05)"
+              : "rgba(22,120,80,0.08)";
+            e.currentTarget.style.color = textSec;
           }}
         >
           {isOpen ? <Icons.Close /> : <Icons.Menu />}
         </button>
       </div>
 
-      {/* Quick Action Buttons */}
+      {/* ── Quick Action Buttons ── */}
       {isOpen && (
         <div style={{ padding: "14px 14px 8px", display: "flex", gap: 8 }}>
+          {/* Primary: accent #ac5208 */}
           <button
             onClick={() => handleNav("/sales/new")}
             style={{
               flex: 1,
               padding: "9px 8px",
               borderRadius: 9,
-              background: "linear-gradient(135deg,#c0712a,#8b4513)",
+              background: accent,
               border: "none",
-              color: "#fff",
+              color: "#ffffff",
+              fontFamily: "'Open Sans', sans-serif",
               fontWeight: 700,
               fontSize: 12,
               cursor: "pointer",
@@ -466,28 +452,34 @@ const SideBar = ({ isOpen, isMobile, onToggle }) => {
               alignItems: "center",
               justifyContent: "center",
               gap: 5,
-              boxShadow: "0 3px 12px rgba(139,69,19,0.45)",
+              boxShadow: "0 3px 12px rgba(172,82,8,0.45)",
               letterSpacing: "0.03em",
               transition: "all 0.2s",
             }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.transform = "translateY(-1px)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.transform = "translateY(0)")
-            }
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = accentHover;
+              e.currentTarget.style.transform = "translateY(-1px)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = accent;
+              e.currentTarget.style.transform = "translateY(0)";
+            }}
           >
             <Icons.Sale /> New Sale
           </button>
+          {/* Secondary: ghost green */}
           <button
             onClick={() => handleNav("/purchases/new")}
             style={{
               flex: 1,
               padding: "9px 8px",
               borderRadius: 9,
-              background: "rgba(139,90,43,0.18)",
-              border: "1px solid rgba(139,90,43,0.35)",
-              color: "#cd853f",
+              background: darkMode
+                ? "rgba(34,197,94,0.08)"
+                : "rgba(22,163,74,0.1)",
+              border: `1px solid ${darkMode ? "rgba(34,197,94,0.25)" : "rgba(22,163,74,0.3)"}`,
+              color: green,
+              fontFamily: "'Open Sans', sans-serif",
               fontWeight: 700,
               fontSize: 12,
               cursor: "pointer",
@@ -499,12 +491,14 @@ const SideBar = ({ isOpen, isMobile, onToggle }) => {
               transition: "all 0.2s",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = "rgba(205,133,63,0.25)";
-              e.currentTarget.style.color = "#f5deb3";
+              e.currentTarget.style.background = darkMode
+                ? "rgba(34,197,94,0.16)"
+                : "rgba(22,163,74,0.18)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = "rgba(139,90,43,0.18)";
-              e.currentTarget.style.color = "#cd853f";
+              e.currentTarget.style.background = darkMode
+                ? "rgba(34,197,94,0.08)"
+                : "rgba(22,163,74,0.1)";
             }}
           >
             <Icons.Purchase /> Purchase
@@ -512,14 +506,14 @@ const SideBar = ({ isOpen, isMobile, onToggle }) => {
         </div>
       )}
 
-      {/* Nav */}
+      {/* ── Nav ── */}
       <nav
         style={{
           flex: 1,
           overflowY: "auto",
-          padding: "8px 10px 8px",
+          padding: "8px 10px",
           scrollbarWidth: "thin",
-          scrollbarColor: "#4a2e0a transparent",
+          scrollbarColor: `${accent}40 transparent`,
         }}
       >
         <ul
@@ -549,8 +543,13 @@ const SideBar = ({ isOpen, isMobile, onToggle }) => {
                         y: r.top + r.height / 2,
                       });
                     }
+                    if (!active) e.currentTarget.style.background = hoverRowBg;
                   }}
-                  onMouseLeave={() => setHoveredItem(null)}
+                  onMouseLeave={(e) => {
+                    setHoveredItem(null);
+                    if (!active)
+                      e.currentTarget.style.background = "transparent";
+                  }}
                   style={{
                     display: "flex",
                     alignItems: "center",
@@ -559,21 +558,9 @@ const SideBar = ({ isOpen, isMobile, onToggle }) => {
                     borderRadius: 10,
                     cursor: "pointer",
                     gap: 10,
-                    background: active
-                      ? "linear-gradient(135deg,rgba(205,133,63,0.28),rgba(139,69,19,0.22))"
-                      : "transparent",
-                    border: active
-                      ? "1px solid rgba(205,133,63,0.35)"
-                      : "1px solid transparent",
+                    background: active ? activeRowBg : "transparent",
+                    border: `1px solid ${active ? activeRowBd : "transparent"}`,
                     transition: "all 0.18s",
-                  }}
-                  onMouseOver={(e) => {
-                    if (!active)
-                      e.currentTarget.style.background = "rgba(139,90,43,0.15)";
-                  }}
-                  onMouseOut={(e) => {
-                    if (!active)
-                      e.currentTarget.style.background = "transparent";
                   }}
                 >
                   <div
@@ -581,7 +568,7 @@ const SideBar = ({ isOpen, isMobile, onToggle }) => {
                   >
                     <span
                       style={{
-                        color: active ? "#f5a623" : "#a07850",
+                        color: active ? iconActive : iconIdle,
                         display: "flex",
                         alignItems: "center",
                         flexShrink: 0,
@@ -593,7 +580,7 @@ const SideBar = ({ isOpen, isMobile, onToggle }) => {
                     {isOpen && (
                       <span
                         style={{
-                          color: active ? "#f5deb3" : "#c4a882",
+                          color: active ? textPrimary : textSec,
                           fontWeight: active ? 700 : 500,
                           fontSize: 13,
                           letterSpacing: "0.02em",
@@ -604,14 +591,14 @@ const SideBar = ({ isOpen, isMobile, onToggle }) => {
                     )}
                   </div>
                   {item.subBar && isOpen && (
-                    <span style={{ color: "#7a5a35", flexShrink: 0 }}>
+                    <span style={{ color: textMuted, flexShrink: 0 }}>
                       <Icons.Chevron open={openSubmenus[item.id]} />
                     </span>
                   )}
                 </div>
-
                 {!isOpen && hoveredItem === item.id && tooltip(item.label)}
 
+                {/* Submenu */}
                 {item.subBar && openSubmenus[item.id] && isOpen && (
                   <ul
                     style={{
@@ -629,6 +616,15 @@ const SideBar = ({ isOpen, isMobile, onToggle }) => {
                         <li key={sub.id}>
                           <div
                             onClick={() => handleNav(sub.path)}
+                            onMouseEnter={(e) => {
+                              if (!sa)
+                                e.currentTarget.style.background = hoverRowBg;
+                            }}
+                            onMouseLeave={(e) => {
+                              if (!sa)
+                                e.currentTarget.style.background =
+                                  "transparent";
+                            }}
                             style={{
                               display: "flex",
                               alignItems: "center",
@@ -637,22 +633,12 @@ const SideBar = ({ isOpen, isMobile, onToggle }) => {
                               borderRadius: 8,
                               cursor: "pointer",
                               background: sa
-                                ? "rgba(205,133,63,0.18)"
+                                ? darkMode
+                                  ? "rgba(34,197,94,0.1)"
+                                  : "rgba(22,163,74,0.1)"
                                 : "transparent",
-                              borderLeft: sa
-                                ? "2px solid #cd853f"
-                                : "2px solid transparent",
+                              borderLeft: `2px solid ${sa ? green : "transparent"}`,
                               transition: "all 0.15s",
-                            }}
-                            onMouseOver={(e) => {
-                              if (!sa)
-                                e.currentTarget.style.background =
-                                  "rgba(139,90,43,0.12)";
-                            }}
-                            onMouseOut={(e) => {
-                              if (!sa)
-                                e.currentTarget.style.background =
-                                  "transparent";
                             }}
                           >
                             <span
@@ -661,12 +647,16 @@ const SideBar = ({ isOpen, isMobile, onToggle }) => {
                                 height: 5,
                                 borderRadius: "50%",
                                 flexShrink: 0,
-                                background: sa ? "#f5a623" : "#5a3d1e",
+                                background: sa
+                                  ? green
+                                  : darkMode
+                                    ? "rgba(255,255,255,0.12)"
+                                    : "rgba(22,120,80,0.2)",
                               }}
                             />
                             <span
                               style={{
-                                color: sa ? "#f5deb3" : "#9a7a50",
+                                color: sa ? textPrimary : textSec,
                                 fontSize: 12,
                                 fontWeight: sa ? 600 : 400,
                                 letterSpacing: "0.02em",
@@ -678,7 +668,7 @@ const SideBar = ({ isOpen, isMobile, onToggle }) => {
                               <span
                                 style={{
                                   marginLeft: "auto",
-                                  background: "#c0392b",
+                                  background: "#ef4444",
                                   color: "#fff",
                                   fontSize: 9,
                                   fontWeight: 800,
@@ -690,15 +680,15 @@ const SideBar = ({ isOpen, isMobile, onToggle }) => {
                                 {sub.badge}
                               </span>
                             )}
-                            {sub.dot === "amber" && (
+                            {sub.dot === "green" && (
                               <span
                                 style={{
                                   marginLeft: "auto",
                                   width: 6,
                                   height: 6,
                                   borderRadius: "50%",
-                                  background: "#f5a623",
-                                  boxShadow: "0 0 6px #f5a623",
+                                  background: green,
+                                  boxShadow: `0 0 6px ${green}`,
                                 }}
                               />
                             )}
@@ -714,12 +704,12 @@ const SideBar = ({ isOpen, isMobile, onToggle }) => {
         </ul>
       </nav>
 
-      {/* Footer */}
+      {/* ── Footer ── */}
       {isOpen && (
         <div
           style={{
             padding: "12px 16px",
-            borderTop: "1px solid rgba(139,90,43,0.2)",
+            borderTop: `1px solid ${borderClr}`,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -727,23 +717,24 @@ const SideBar = ({ isOpen, isMobile, onToggle }) => {
         >
           <span
             style={{
-              color: "#5a3d1e",
+              color: textMuted,
               fontSize: 11,
               fontWeight: 500,
               letterSpacing: "0.06em",
             }}
           >
-            v2.1.0 • WoodCraft POS
+            v2.1.0 • CraftPOS
           </span>
           <span
+            className="live-badge"
             style={{
-              background: "rgba(34,197,94,0.15)",
-              color: "#4ade80",
+              background: "rgba(34,197,94,0.12)",
+              color: green,
               fontSize: 9,
               fontWeight: 700,
               padding: "2px 8px",
               borderRadius: 20,
-              border: "1px solid rgba(74,222,128,0.25)",
+              border: "1px solid rgba(34,197,94,0.25)",
               letterSpacing: "0.06em",
             }}
           >

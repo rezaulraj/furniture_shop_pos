@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { T, card } from "../../theme/Colors";
+import { T, card } from "../../theme/colors";
 import { Badge } from "../../components/Badge";
 import { Btn } from "../../components/Button";
 import { Ic } from "../../components/Icons";

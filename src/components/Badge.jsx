@@ -1,4 +1,4 @@
-import { T } from "../theme/Colors";
+import { T } from "../theme/colors";
 
 export const Badge = ({ children, color = "gold", small }) => {
   const map = {

@@ -1,4 +1,4 @@
-import { T } from "../theme/Colors";
+import { T } from "../theme/colors";
 
 export const Btn = ({
   children,

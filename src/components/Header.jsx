@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../store/authStore";
 
 // ── Icon helper ───────────────────────────────────────────────────
 const Ico = ({ d, size = 20, stroke = true }) => (
@@ -125,30 +127,58 @@ const STATS = [
 ];
 
 const Header = ({ onToggleSidebar, currentPage, darkMode, setDarkMode }) => {
+  const navigate = useNavigate();
+  const { user, logout } = useAuthStore();
+
   const [profileOpen, setProfileOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchVal, setSearchVal] = useState("");
+
   const profileRef = useRef(null);
   const notifRef = useRef(null);
   const searchRef = useRef(null);
 
   useEffect(() => {
     const h = (e) => {
-      if (profileRef.current && !profileRef.current.contains(e.target))
+      if (profileRef.current && !profileRef.current.contains(e.target)) {
         setProfileOpen(false);
-      if (notifRef.current && !notifRef.current.contains(e.target))
+      }
+      if (notifRef.current && !notifRef.current.contains(e.target)) {
         setNotifOpen(false);
-      if (searchRef.current && !searchRef.current.contains(e.target))
+      }
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
         setSearchOpen(false);
+      }
     };
+
     document.addEventListener("mousedown", h);
     return () => document.removeEventListener("mousedown", h);
   }, []);
 
+  const displayName = user?.full_name || "User";
+  const displayEmail = user?.email || "no-email@example.com";
+  const displayRole = user?.role?.role_name || "No Role";
+  const displayStore = user?.store?.store_name || "No Store";
+  const avatarLetter = user?.full_name?.charAt(0)?.toUpperCase() || "U";
+
+  const formattedRole =
+    displayRole.charAt(0).toUpperCase() + displayRole.slice(1);
+
+  const roleBadgeColor =
+    displayRole === "admin"
+      ? "#ef4444"
+      : displayRole === "manager"
+        ? "#3b82f6"
+        : "#22c55e";
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login", { replace: true });
+  };
+
   // ── Color tokens ──────────────────────────────────────────────
   const bg = darkMode ? "#040d1c" : "#f0f7f4";
-  const bgSecondary = darkMode ? "#060f22" : "#e8f5ee";
   const borderClr = darkMode
     ? "rgba(255,255,255,0.06)"
     : "rgba(22,120,80,0.12)";
@@ -183,14 +213,13 @@ const Header = ({ onToggleSidebar, currentPage, darkMode, setDarkMode }) => {
 
   const menuItems = [
     { icon: <HIcon.User />, label: "My Profile" },
-    { icon: <HIcon.Store />, label: "Store Settings" },
+    { icon: <HIcon.Store />, label: displayStore },
     { icon: <HIcon.Report />, label: "Reports" },
     { icon: <HIcon.Settings />, label: "Settings" },
   ];
 
   return (
     <div style={{ fontFamily: font }}>
-      {/* ── Main Header ── */}
       <header
         style={{
           background: bg,
@@ -204,7 +233,6 @@ const Header = ({ onToggleSidebar, currentPage, darkMode, setDarkMode }) => {
           zIndex: 20,
         }}
       >
-        {/* Toggle */}
         <button
           style={btnBase}
           onClick={onToggleSidebar}
@@ -222,7 +250,6 @@ const Header = ({ onToggleSidebar, currentPage, darkMode, setDarkMode }) => {
           <HIcon.Menu />
         </button>
 
-        {/* Breadcrumb */}
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
             <span
@@ -235,17 +262,6 @@ const Header = ({ onToggleSidebar, currentPage, darkMode, setDarkMode }) => {
             >
               CraftPOS
             </span>
-            {/* <span style={{ color: textMuted, fontSize: 11 }}>›</span>
-            <span
-              style={{
-                color: green,
-                fontSize: 11,
-                letterSpacing: "0.08em",
-                fontWeight: 600,
-              }}
-            >
-              {currentPage}
-            </span> */}
           </div>
           <h1
             style={{
@@ -263,62 +279,6 @@ const Header = ({ onToggleSidebar, currentPage, darkMode, setDarkMode }) => {
 
         <div style={{ flex: 1 }} />
 
-        {/* Search */}
-        {/* <div ref={searchRef} style={{ position: "relative" }}>
-          {searchOpen ? (
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                background: darkMode ? "#0a1628" : "#fff",
-                border: `1px solid rgba(172,82,8,0.4)`,
-                borderRadius: 10,
-                padding: "0 12px",
-                height: 38,
-                minWidth: 220,
-              }}
-            >
-              <span style={{ color: accent }}>
-                <HIcon.Search />
-              </span>
-              <input
-                autoFocus
-                value={searchVal}
-                onChange={(e) => setSearchVal(e.target.value)}
-                placeholder="Search products, customers..."
-                style={{
-                  background: "none",
-                  border: "none",
-                  outline: "none",
-                  color: textPrimary,
-                  fontSize: 13,
-                  width: "100%",
-                  fontFamily: font,
-                }}
-              />
-            </div>
-          ) : (
-            <button
-              style={btnBase}
-              onClick={() => setSearchOpen(true)}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = "rgba(172,82,8,0.18)";
-                e.currentTarget.style.color = accentHover;
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = darkMode
-                  ? "rgba(255,255,255,0.04)"
-                  : "rgba(22,120,80,0.06)";
-                e.currentTarget.style.color = textSec;
-              }}
-            >
-              <HIcon.Search />
-            </button>
-          )}
-        </div> */}
-
-        {/* New Sale — accent button */}
         <button
           style={{
             display: "flex",
@@ -350,7 +310,6 @@ const Header = ({ onToggleSidebar, currentPage, darkMode, setDarkMode }) => {
           <HIcon.Sale /> New Sale
         </button>
 
-        {/* Purchase — ghost green */}
         <button
           style={{
             display: "flex",
@@ -362,7 +321,9 @@ const Header = ({ onToggleSidebar, currentPage, darkMode, setDarkMode }) => {
             background: darkMode
               ? "rgba(34,197,94,0.08)"
               : "rgba(22,163,74,0.1)",
-            border: `1px solid ${darkMode ? "rgba(34,197,94,0.25)" : "rgba(22,163,74,0.3)"}`,
+            border: `1px solid ${
+              darkMode ? "rgba(34,197,94,0.25)" : "rgba(22,163,74,0.3)"
+            }`,
             color: green,
             fontFamily: font,
             fontWeight: 700,
@@ -385,7 +346,6 @@ const Header = ({ onToggleSidebar, currentPage, darkMode, setDarkMode }) => {
           <HIcon.Purchase /> Purchase
         </button>
 
-        {/* Notifications */}
         <div ref={notifRef} style={{ position: "relative" }}>
           <button
             style={btnBase}
@@ -415,6 +375,7 @@ const Header = ({ onToggleSidebar, currentPage, darkMode, setDarkMode }) => {
               }}
             />
           </button>
+
           {notifOpen && (
             <div
               className="animate-slide-up"
@@ -458,6 +419,7 @@ const Header = ({ onToggleSidebar, currentPage, darkMode, setDarkMode }) => {
                   Mark all read
                 </span>
               </div>
+
               {NOTIFS.map((n) => (
                 <div
                   key={n.id}
@@ -507,6 +469,7 @@ const Header = ({ onToggleSidebar, currentPage, darkMode, setDarkMode }) => {
                   </div>
                 </div>
               ))}
+
               <div style={{ padding: "10px 16px", textAlign: "center" }}>
                 <span
                   style={{
@@ -523,7 +486,6 @@ const Header = ({ onToggleSidebar, currentPage, darkMode, setDarkMode }) => {
           )}
         </div>
 
-        {/* Dark mode toggle */}
         <button
           style={btnBase}
           onClick={() => setDarkMode && setDarkMode(!darkMode)}
@@ -541,7 +503,6 @@ const Header = ({ onToggleSidebar, currentPage, darkMode, setDarkMode }) => {
           {darkMode ? <HIcon.Sun /> : <HIcon.Moon />}
         </button>
 
-        {/* Profile */}
         <div ref={profileRef} style={{ position: "relative" }}>
           <button
             onClick={() => setProfileOpen(!profileOpen)}
@@ -585,9 +546,10 @@ const Header = ({ onToggleSidebar, currentPage, darkMode, setDarkMode }) => {
               }}
             >
               <span style={{ color: "#fff", fontWeight: 800, fontSize: 13 }}>
-                A
+                {avatarLetter}
               </span>
             </div>
+
             <div style={{ textAlign: "left" }}>
               <p
                 style={{
@@ -598,12 +560,13 @@ const Header = ({ onToggleSidebar, currentPage, darkMode, setDarkMode }) => {
                   lineHeight: 1.2,
                 }}
               >
-                Admin User
+                {displayName}
               </p>
               <p style={{ color: textSec, fontSize: 10, margin: 0 }}>
-                Store Manager
+                {formattedRole}
               </p>
             </div>
+
             <span style={{ color: textMuted, marginLeft: 2 }}>
               <HIcon.ChevDown />
             </span>
@@ -616,7 +579,7 @@ const Header = ({ onToggleSidebar, currentPage, darkMode, setDarkMode }) => {
                 position: "absolute",
                 right: 0,
                 top: 50,
-                width: 200,
+                width: 240,
                 background: cardBg,
                 borderRadius: 12,
                 border: `1px solid ${cardBorder}`,
@@ -641,28 +604,50 @@ const Header = ({ onToggleSidebar, currentPage, darkMode, setDarkMode }) => {
                     margin: 0,
                   }}
                 >
-                  Admin User
+                  {displayName}
                 </p>
-                <p style={{ color: textSec, fontSize: 11, margin: 0 }}>
-                  admin@craftpos.com
+
+                <p
+                  style={{
+                    color: textSec,
+                    fontSize: 11,
+                    margin: "4px 0 0 0",
+                    wordBreak: "break-word",
+                  }}
+                >
+                  {displayEmail}
                 </p>
+
+                <p
+                  style={{
+                    color: textMuted,
+                    fontSize: 11,
+                    margin: "4px 0 0 0",
+                    wordBreak: "break-word",
+                  }}
+                >
+                  {displayStore}
+                </p>
+
                 <span
                   style={{
                     display: "inline-block",
-                    marginTop: 5,
-                    background: "rgba(172,82,8,0.15)",
-                    color: accent,
+                    marginTop: 8,
+                    background: `${roleBadgeColor}20`,
+                    color: roleBadgeColor,
                     fontSize: 9,
                     fontWeight: 700,
-                    padding: "2px 8px",
+                    padding: "3px 8px",
                     borderRadius: 20,
-                    border: `1px solid rgba(172,82,8,0.3)`,
+                    border: `1px solid ${roleBadgeColor}50`,
                     letterSpacing: "0.06em",
+                    textTransform: "uppercase",
                   }}
                 >
-                  ADMIN
+                  {displayRole}
                 </span>
               </div>
+
               {menuItems.map((m, i) => (
                 <button
                   key={i}
@@ -695,13 +680,16 @@ const Header = ({ onToggleSidebar, currentPage, darkMode, setDarkMode }) => {
                   <span>{m.label}</span>
                 </button>
               ))}
+
               <div
                 style={{
                   borderTop: `1px solid ${cardBorder}`,
                   margin: "4px 0",
                 }}
               />
+
               <button
+                onClick={handleLogout}
                 style={{
                   width: "100%",
                   display: "flex",
@@ -733,7 +721,6 @@ const Header = ({ onToggleSidebar, currentPage, darkMode, setDarkMode }) => {
         </div>
       </header>
 
-      {/* ── Stats Bar ── */}
       <div
         style={{
           background: darkMode ? "#060f22" : "#e4f0eb",
@@ -781,6 +768,7 @@ const Header = ({ onToggleSidebar, currentPage, darkMode, setDarkMode }) => {
                 {s.value}
               </p>
             </div>
+
             <span
               style={{
                 fontSize: 10,
@@ -791,7 +779,9 @@ const Header = ({ onToggleSidebar, currentPage, darkMode, setDarkMode }) => {
                   ? "rgba(34,197,94,0.12)"
                   : "rgba(239,68,68,0.1)",
                 color: s.up ? green : "#ef4444",
-                border: `1px solid ${s.up ? "rgba(34,197,94,0.2)" : "rgba(239,68,68,0.2)"}`,
+                border: `1px solid ${
+                  s.up ? "rgba(34,197,94,0.2)" : "rgba(239,68,68,0.2)"
+                }`,
               }}
             >
               {s.delta}

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { T, card } from "../../theme/colors";
 import { Btn } from "../../components/Button";
 import { Ic } from "../../components/Icons";
@@ -19,9 +20,15 @@ const EMPTY = {
   brand: "",
 };
 
-export default function AddProduct({ onCancel, onSuccess }) {
+export default function EditProduct() {
+  const navigate = useNavigate();
+  const { id } = useParams();
+
   const {
-    createProduct,
+    products,
+    fetchProducts,
+    updateProduct,
+    isLoading,
     isSubmitting,
     error: productError,
     clearError: clearProductError,
@@ -37,11 +44,52 @@ export default function AddProduct({ onCancel, onSuccess }) {
   const [form, setForm] = useState(EMPTY);
   const [formError, setFormError] = useState("");
   const [savedProduct, setSavedProduct] = useState(null);
+  const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
     fetchCategories({ is_active: true });
     clearProductError();
   }, [fetchCategories, clearProductError]);
+
+  useEffect(() => {
+    if (!products.length) {
+      fetchProducts();
+    }
+  }, [products.length, fetchProducts]);
+
+  const currentProduct = useMemo(
+    () => products.find((item) => Number(item.product_id) === Number(id)),
+    [products, id],
+  );
+
+  useEffect(() => {
+    if (currentProduct && !initialized) {
+      setForm({
+        sku: currentProduct.sku || "",
+        product_name: currentProduct.product_name || "",
+        image_url: currentProduct.image_url || "",
+        description: currentProduct.description || "",
+        category_id: currentProduct.category_id
+          ? String(currentProduct.category_id)
+          : "",
+        cost_price:
+          currentProduct.cost_price !== undefined &&
+          currentProduct.cost_price !== null
+            ? String(currentProduct.cost_price)
+            : "",
+        selling_price:
+          currentProduct.selling_price !== undefined &&
+          currentProduct.selling_price !== null
+            ? String(currentProduct.selling_price)
+            : "",
+        dimensions: currentProduct.dimensions || "",
+        material: currentProduct.material || "",
+        color: currentProduct.color || "",
+        brand: currentProduct.brand || "",
+      });
+      setInitialized(true);
+    }
+  }, [currentProduct, initialized]);
 
   const activeCategories = useMemo(
     () => categories.filter((item) => item.is_active),
@@ -110,12 +158,10 @@ export default function AddProduct({ onCancel, onSuccess }) {
         brand: form.brand.trim(),
       };
 
-      const product = await createProduct(payload);
+      const product = await updateProduct(Number(id), payload);
       setSavedProduct(product);
-      setForm(EMPTY);
-      onSuccess?.(product);
     } catch {
-      // store error handles UI
+      // store error handles ui
     }
   };
 
@@ -156,7 +202,7 @@ export default function AddProduct({ onCancel, onSuccess }) {
               margin: "0 0 8px",
             }}
           >
-            Product Created
+            Product Updated
           </h2>
           <p
             style={{
@@ -169,27 +215,75 @@ export default function AddProduct({ onCancel, onSuccess }) {
             <strong style={{ color: T.accent }}>
               {savedProduct.product_name}
             </strong>{" "}
-            has been added successfully.
+            has been updated successfully.
           </p>
         </div>
 
         <div style={{ display: "flex", gap: 10 }}>
-          <Btn
-            variant="ghost"
-            onClick={() => {
-              setSavedProduct(null);
-              clearProductError();
-            }}
-          >
-            <Ic.Plus /> Add Another
+          <Btn variant="ghost" onClick={() => navigate("/products")}>
+            <Ic.Eye /> View Products
           </Btn>
-
-          {onCancel && (
-            <Btn onClick={onCancel}>
-              <Ic.Eye /> View Products
-            </Btn>
-          )}
+          <Btn
+            onClick={() =>
+              navigate(`/products/edit/${savedProduct.product_id}`)
+            }
+          >
+            <Ic.Edit /> Continue Editing
+          </Btn>
         </div>
+      </div>
+    );
+  }
+
+  if (isLoading && !currentProduct) {
+    return (
+      <div
+        style={{
+          ...card(),
+          padding: 28,
+          textAlign: "center",
+          color: T.textSub,
+          fontSize: 13,
+          fontWeight: 700,
+        }}
+      >
+        Loading product...
+      </div>
+    );
+  }
+
+  if (!isLoading && !currentProduct && initialized) {
+    return (
+      <div
+        style={{
+          ...card(),
+          padding: 34,
+          textAlign: "center",
+        }}
+      >
+        <div style={{ fontSize: 48, marginBottom: 10 }}>📦</div>
+        <p
+          style={{
+            color: T.text,
+            fontSize: 16,
+            fontWeight: 800,
+            margin: "0 0 6px",
+          }}
+        >
+          Product not found
+        </p>
+        <p
+          style={{
+            color: T.textSub,
+            fontSize: 12.5,
+            margin: 0,
+          }}
+        >
+          This product may have been deleted or not loaded yet.
+        </p>
+        <Btn onClick={() => navigate("/products")} style={{ marginTop: 16 }}>
+          Back to Products
+        </Btn>
       </div>
     );
   }
@@ -224,7 +318,7 @@ export default function AddProduct({ onCancel, onSuccess }) {
             fontSize: 22,
           }}
         >
-          📦
+          ✏️
         </div>
 
         <div>
@@ -236,7 +330,7 @@ export default function AddProduct({ onCancel, onSuccess }) {
               margin: 0,
             }}
           >
-            Add New Product
+            Edit Product
           </h1>
           <p
             style={{
@@ -245,19 +339,17 @@ export default function AddProduct({ onCancel, onSuccess }) {
               margin: "4px 0 0",
             }}
           >
-            Clean product form using backend-supported fields only
+            Update product information using supported backend fields only
           </p>
         </div>
 
-        {onCancel && (
-          <Btn
-            variant="ghost"
-            onClick={onCancel}
-            style={{ marginLeft: "auto" }}
-          >
-            <Ic.Close /> Cancel
-          </Btn>
-        )}
+        <Btn
+          variant="ghost"
+          onClick={() => navigate("/products")}
+          style={{ marginLeft: "auto" }}
+        >
+          <Ic.Close /> Cancel
+        </Btn>
       </div>
 
       {(formError || productError || categoryError) && (
@@ -453,11 +545,9 @@ export default function AddProduct({ onCancel, onSuccess }) {
               gap: 10,
             }}
           >
-            {onCancel && (
-              <Btn variant="ghost" onClick={onCancel}>
-                Cancel
-              </Btn>
-            )}
+            <Btn variant="ghost" onClick={() => navigate("/products")}>
+              Cancel
+            </Btn>
 
             <button
               onClick={handleSubmit}
@@ -475,7 +565,7 @@ export default function AddProduct({ onCancel, onSuccess }) {
                 boxShadow: "0 10px 24px rgba(172,82,8,0.30)",
               }}
             >
-              {isSubmitting ? "Creating..." : "Create Product"}
+              {isSubmitting ? "Saving..." : "Save Changes"}
             </button>
           </div>
         </div>

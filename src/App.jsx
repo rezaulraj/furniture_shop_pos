@@ -26,6 +26,7 @@ import AuthLayout from "./components/auth/AuthLayout";
 import AuthGuard from "./components/auth/AuthGuard";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
+import EditProduct from "./pages/product/EditProduct";
 function App() {
   return (
     <>
@@ -54,6 +55,7 @@ function App() {
             <Route path="/inventory/damage" element={<DamageStock />} />
             <Route path="/products" element={<Products />} />
             <Route path="/products/add" element={<AddProduct />} />
+            <Route path="/products/edit/:id" element={<EditProduct />} />
             <Route path="/products/categories" element={<Categories />} />
             <Route path="/customers" element={<AllCustomers />} />
             <Route path="/customers/add" element={<AddCustomer />} />
